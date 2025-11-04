@@ -18,7 +18,7 @@ services:
       dockerfile: Dockerfile
     user: root
     ports:
-      - "3001:3000"
+      - "3001:3001"
     environment:
       - RAILS_ENV=development
       - DATABASE_URL=mysql2://rails_user:password@db:3306/rails_development
