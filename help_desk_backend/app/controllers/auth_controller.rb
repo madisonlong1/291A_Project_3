@@ -14,7 +14,7 @@ class AuthController < ApplicationController
 
   def login
     user = User.find_by(username: params[:username])
-    if user && user.password == params[:password]
+    if user && user.authenticate(params[:password]) #fix, added user.authenticate
       user.update(last_active_at: Time.current)
       render json:{message:"Login successful", user: user}, status: :ok
     else
