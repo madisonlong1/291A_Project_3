@@ -7,4 +7,6 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  # Simple health endpoint used by load balancers and uptime checks
+  get '/health', to: 'health#index'
 end
