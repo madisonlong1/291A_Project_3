@@ -12,6 +12,13 @@ Rails.application.routes.draw do
   # Simple health endpoint used by load balancers and uptime checks
   get '/health', to: 'health#index'
 
+   # Polling/Update endpoints
+  namespace :api do
+    get "conversations/updates", to: "updates#conversations"
+    get "messages/updates", to: "updates#messages"
+    get "expert-queue/updates", to: "updates#expert_queue"
+  end
+
 
   scope :auth do
     post "register", to: "auth#register"
@@ -31,12 +38,6 @@ Rails.application.routes.draw do
     end
   end
 
-  # Polling/Update endpoints
-  namespace :api do
-    get "conversations/updates", to: "updates#conversations"
-    get "messages/updates", to: "updates#messages"
-    get "expert-queue/updates", to: "updates#expert_queue"
-  end
 
   root to: proc { [200, {}, ['{"status":"ok"}']] }
 
