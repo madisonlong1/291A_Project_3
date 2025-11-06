@@ -29,7 +29,7 @@ class ConversationsController < ApplicationController
   end
 
   def conversation_params
-    params.require(:conversation).permit(:title, :status, :questioner_id, :assigned_expert_id)
+    params.require(:conversation).permit(:title, :status, :initiator_id, :assigned_expert_id)
   end
 
 end
