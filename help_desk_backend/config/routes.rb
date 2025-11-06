@@ -31,6 +31,12 @@ Rails.application.routes.draw do
     end
   end
 
+  # Polling/Update endpoints
+  namespace :api do
+    get "conversations/updates", to: "updates#conversations"
+    get "messages/updates", to: "updates#messages"
+    get "expert-queue/updates", to: "updates#expert_queue"
+  end
 
   root to: proc { [200, {}, ['{"status":"ok"}']] }
 
