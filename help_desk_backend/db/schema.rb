@@ -12,15 +12,15 @@
 
 ActiveRecord::Schema[8.1].define(version: 2025_11_05_084959) do
   create_table "conversations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "assigned_expert_id_id"
+    t.bigint "assigned_expert_id"
     t.datetime "created_at", null: false
-    t.bigint "initiator_id_id", null: false
+    t.bigint "initiator_id", null: false
     t.datetime "last_message_at"
     t.string "status", default: "waiting", null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
-    t.index ["assigned_expert_id_id"], name: "index_conversations_on_assigned_expert_id_id"
-    t.index ["initiator_id_id"], name: "index_conversations_on_initiator_id_id"
+    t.index ["assigned_expert_id"], name: "index_conversations_on_assigned_expert_id"
+    t.index ["initiator_id"], name: "index_conversations_on_initiator_id"
   end
 
   create_table "expert_assignments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -74,8 +74,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_05_084959) do
     t.string "username"
   end
 
-  add_foreign_key "conversations", "users", column: "assigned_expert_id_id"
-  add_foreign_key "conversations", "users", column: "initiator_id_id"
+  add_foreign_key "conversations", "users", column: "assigned_expert_id"
+  add_foreign_key "conversations", "users", column: "initiator_id"
   add_foreign_key "expert_assignments", "conversations"
   add_foreign_key "expert_assignments", "users", column: "expert_id"
   add_foreign_key "expert_profiles", "users"
