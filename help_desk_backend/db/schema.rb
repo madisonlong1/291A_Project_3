@@ -50,6 +50,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_05_084959) do
     t.bigint "conversation_id", null: false
     t.datetime "created_at", null: false
     t.boolean "is_read", default: false, null: false
+    t.datetime "read_at"
     t.bigint "sender_id", null: false
     t.string "sender_role", null: false
     t.datetime "updated_at", null: false

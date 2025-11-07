@@ -2,7 +2,7 @@ class MessagesController < ApplicationController
   before_action :set_message, only: [:mark_read]
   def index
     @messages = Message.where(conversation_id: params[:conversation_id])
-    render json:@messages
+    render json:@messages 
   end
 
   def create

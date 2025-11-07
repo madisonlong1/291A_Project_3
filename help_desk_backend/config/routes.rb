@@ -12,9 +12,18 @@ Rails.application.routes.draw do
   # Simple health endpoint used by load balancers and uptime checks
   get '/health', to: 'health#index'
 
+  scope :expert do
+    get "queue", to: "expert#queue"
+    get "profile", to: "expert#profile"
+    put "profile", to: "expert#update_profile"
+    get "assignments/history", to: "expert#assignments_history"
+    post "conversations/:conversation_id/claim", to: "expert#claim_conversation"
+    post "conversations/:conversation_id/unclaim", to: "expert#unclaim_conversation"
+  end
+
    # Polling/Update endpoints
   namespace :api do
-    get "conversations/updates", to: "updates#conversations"
+    get "conversations/updates", to: "updates#conversations"  
     get "messages/updates", to: "updates#messages"
     get "expert-queue/updates", to: "updates#expert_queue"
   end
