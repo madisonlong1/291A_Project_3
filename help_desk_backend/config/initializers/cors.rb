@@ -5,12 +5,5 @@
 
 # Read more: https://github.com/cyu/rack-cors
 
-# Rails.application.config.middleware.insert_before 0, Rack::Cors do
-#   allow do
-#     origins "example.com"
-#
-#     resource "*",
-#       headers: :any,
-#       methods: [:get, :post, :put, :patch, :delete, :options, :head]
-#   end
-# end
+# CORS is configured in config/application.rb to avoid duplication
+# This file is kept for reference
