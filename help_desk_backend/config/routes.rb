@@ -17,8 +17,8 @@ Rails.application.routes.draw do
     get "profile", to: "expert#profile"
     put "profile", to: "expert#update_profile"
     get "assignments/history", to: "expert#assignments_history"
-    post "conversations/:conversation_id/claim", to: "expert#claim_conversation"
-    post "conversations/:conversation_id/unclaim", to: "expert#unclaim_conversation"
+    post "conversations/:conversation_id/claim", to: "expert#claim"
+    post "conversations/:conversation_id/unclaim", to: "expert#unclaim"
   end
 
    # Polling/Update endpoints
