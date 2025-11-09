@@ -8,7 +8,15 @@ class ApplicationController < ActionController::API
     decoded = JwtService.decode(token)
     return nil unless decoded
 
-    User.find_by(id: decoded[:user_id])
+    user = User.find_by(id: decoded[:user_id])
+    return nil unless user
+
+    if user.jwt_revoked_at.present?
+      issued_at = decoded[:iat]
+      return nil if issued_at.nil? || issued_at < user.jwt_revoked_at.to_i
+    end
+
+    user
   rescue ActiveRecord::RecordNotFound
     nil
   end
