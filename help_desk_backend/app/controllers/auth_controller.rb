@@ -1,10 +1,9 @@
 class AuthController < ApplicationController
-  SECRET_KEY = Rails.application.credentials.secret_key_base || 'dev_key'
-
   def register
     user = User.new(username: params[:username], password: params[:password])
     if user.save
-      token = JWT.encode({ user_id: user.id, exp: 24.hours.from_now.to_i }, SECRET_KEY, 'HS256')
+      session[:user_id] = user.id
+      token = JwtService.encode(user)
       render json: {
         user: { id: user.id, username: user.username, created_at: user.created_at, last_active_at: user.last_active_at },
         token: token
@@ -18,7 +17,8 @@ class AuthController < ApplicationController
     user = User.find_by(username: params[:username])
     if user && user.authenticate(params[:password])
       user.update(last_active_at: Time.current)
-      token = JWT.encode({ user_id: user.id, exp: 24.hours.from_now.to_i }, SECRET_KEY, 'HS256')
+      session[:user_id] = user.id
+      token = JwtService.encode(user)
       render json: {
         user: { id: user.id, username: user.username, created_at: user.created_at, last_active_at: user.last_active_at },
         token: token
@@ -29,31 +29,38 @@ class AuthController < ApplicationController
   end
 
   def logout
+    reset_session
     render json: { message: 'Logged out successfully' }, status: :ok
   end
 
   def refresh
-    token = request.headers['Authorization']&.split(' ')&.last
-    begin
-      payload = JWT.decode(token, SECRET_KEY, true, { algorithm: 'HS256' }).first
-      user = User.find(payload['user_id'])
-      new_token = JWT.encode({ user_id: user.id, exp: 24.hours.from_now.to_i }, SECRET_KEY, 'HS256')
-      render json: {
-        user: { id: user.id, username: user.username, created_at: user.created_at, last_active_at: user.last_active_at },
-        token: new_token
-      }, status: :ok
-    rescue
-      render json: { error: 'No session found' }, status: :unauthorized
+    # Require valid session (JWT token alone is not enough)
+    unless session[:user_id]
+      return render json: { error: 'No session found' }, status: :unauthorized
     end
+    
+    user = User.find(session[:user_id])
+    new_token = JwtService.encode(user)
+    render json: {
+      user: { id: user.id, username: user.username, created_at: user.created_at, last_active_at: user.last_active_at },
+      token: new_token
+    }, status: :ok
   end
 
   def me
+    # Try JWT token first
     token = request.headers['Authorization']&.split(' ')&.last
-    begin
-      payload = JWT.decode(token, SECRET_KEY, true, { algorithm: 'HS256' }).first
-      user = User.find(payload['user_id'])
+    if token
+      decoded = JwtService.decode(token)
+      return render json: { error: 'No session found' }, status: :unauthorized if decoded.nil?
+      
+      user = User.find(decoded[:user_id])
       render json: { id: user.id, username: user.username, created_at: user.created_at, last_active_at: user.last_active_at }, status: :ok
-    rescue
+    elsif session[:user_id]
+      # Fall back to session
+      user = User.find(session[:user_id])
+      render json: { id: user.id, username: user.username, created_at: user.created_at, last_active_at: user.last_active_at }, status: :ok
+    else
       render json: { error: 'No session found' }, status: :unauthorized
     end
   end
