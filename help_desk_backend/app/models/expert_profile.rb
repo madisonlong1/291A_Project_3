@@ -1,6 +1,6 @@
 class ExpertProfile < ApplicationRecord
   belongs_to :user
-
+  validates :user, presence: true, uniqueness: true
   def self.create!(attributes = nil, &block)
     # Handle duplicate user_id gracefully - return existing profile if it exists
     if attributes.is_a?(Hash) && attributes[:user_id]
