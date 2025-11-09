@@ -29,7 +29,11 @@ class AuthController < ApplicationController
   end
 
   def logout
+    user = current_user_from_token || (session[:user_id] ? User.find_by(id: session[:user_id]) : nil)
+    old_session_id = session.id&.public_id
     reset_session
+    ActiveRecord::SessionStore::Session.where(session_id: old_session_id).delete_all if old_session_id.present?
+    user&.update(jwt_revoked_at: Time.current)
     render json: { message: 'Logged out successfully' }, status: :ok
   end
 
